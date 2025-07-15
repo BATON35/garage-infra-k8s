@@ -3,49 +3,66 @@ pipeline {
 
   environment {
     HELM_HOME = './helm/umbrella'
+    HELM_PATH = "${WORKSPACE}/.helm/bin"
   }
 
   stages {
     stage('Smoke Test') {
       steps {
-        echo 'Jenkins działa 🎉'
+        echo '✅ Jenkins działa 🎉'
       }
     }
 
     stage('Checkout') {
       steps {
         checkout scm
+        echo "📦 Kod źródłowy pobrany z repozytorium"
       }
     }
 
     stage('Install Helm Temporarily') {
       steps {
         sh '''
-          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          curl -fsSL https://get.helm.sh/helm-v3.18.4-linux-amd64.tar.gz -o helm.tar.gz
+          tar -zxvf helm.tar.gz
+          mkdir -p .helm/bin
+          mv linux-amd64/helm .helm/bin/helm
+          export PATH=$PWD/.helm/bin:$PATH
+          echo "✅ Helm zainstalowany tymczasowo"
+          helm version
         '''
       }
     }
 
     stage('Prepare Helm Dependencies') {
       steps {
-        sh "helm dependency update ${HELM_HOME}"
+        sh '''
+          export PATH=$PWD/.helm/bin:$PATH
+          helm dependency update ./helm/umbrella
+        '''
+        echo "🔧 Zależności Helm zaktualizowane"
       }
     }
 
     stage('Deploy Microservices') {
       steps {
-        sh "helm upgrade --install platform ${HELM_HOME} -f ${HELM_HOME}/values.yaml"
+        sh '''
+          export PATH=$PWD/.helm/bin:$PATH
+          helm upgrade --install platform ./helm/umbrella -f ./helm/umbrella/values.yaml
+        '''
+        echo "🚀 Mikroserwisy wdrożone"
       }
     }
 
     stage('Verify Rollouts') {
       steps {
         sh '''
-          kubectl rollout status deployment/discovery-service || echo '❌ Discovery-service not ready'
-          kubectl rollout status deployment/vehicle-service || echo '❌ Vehicle-service not ready'
-          kubectl rollout status deployment/api-gateway || echo '❌ API Gateway not ready'
-          kubectl rollout status deployment/vehicle-db || echo '❌ Vehicle-db not ready'
+          kubectl rollout status deployment/discovery-service || echo '❌ Discovery-service nie gotowy'
+          kubectl rollout status deployment/vehicle-service || echo '❌ Vehicle-service nie gotowy'
+          kubectl rollout status deployment/api-gateway || echo '❌ API Gateway nie gotowy'
+          kubectl rollout status deployment/vehicle-db || echo '❌ Vehicle-db nie gotowy'
         '''
+        echo "🔍 Rollout-check zakończony"
       }
     }
   }
