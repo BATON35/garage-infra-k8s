@@ -1,28 +1,38 @@
 discovery-service:
+  enabled: true
   service:
     port: 8761
-  enabled: true
   image:
+    repository: konrad/discovery-service
     tag: "1.0.0"
+    pullPolicy: IfNotPresent
 
 vehicle-service:
+  enabled: true
   service:
     port: 8180
     type: ClusterIP
-  enabled: true
   image:
+    repository: konrad/vehicle-service
     tag: "1.0.1"
+    pullPolicy: IfNotPresent
 
 api-gateway:
+  enabled: true
   service:
     port: 8080
-  enabled: true
   image:
+    repository: konrad/api-gateway
     tag: "1.0.2"
+    pullPolicy: IfNotPresent
 
 vehicle-db:
+  enabled: true
   service:
     port: 5432
-  enabled: true
   image:
-    tag: "1.0.3"
+    repository: postgres
+    tag: "15"
+    pullPolicy: IfNotPresent
+  persistence:
+    existingClaim: postgres-pvc
