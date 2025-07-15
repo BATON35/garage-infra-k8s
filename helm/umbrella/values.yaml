@@ -1,4 +1,6 @@
 discovery-service:
+  service:
+    port: 8761
   enabled: true
   image:
     tag: "1.0.0"
@@ -12,11 +14,15 @@ vehicle-service:
     tag: "1.0.1"
 
 api-gateway:
+  service:
+    port: 8080
   enabled: true
   image:
     tag: "1.0.2"
 
 vehicle-db:
+  service:
+    port: 5432
   enabled: true
   image:
     tag: "1.0.3"
