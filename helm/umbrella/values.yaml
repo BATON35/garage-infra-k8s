@@ -35,4 +35,5 @@ vehicle-db:
     tag: "15"
     pullPolicy: IfNotPresent
   persistence:
+    enabled: true
     existingClaim: postgres-pvc
