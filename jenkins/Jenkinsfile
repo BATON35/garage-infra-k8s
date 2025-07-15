@@ -1,47 +1,52 @@
-// pipeline {
-//   agent any
-//   stages {
-//     stage('Smoke test') {
-//       steps {
-//         echo 'Jenkins działa 🎉'
-//       }
-//     }
-//   }
-// }
+pipeline {
+  agent any
 
-  pipeline {
-    agent any
-
-    environment {
+  environment {
     HELM_HOME = './helm/umbrella'
+  }
+
+  stages {
+    stage('Smoke Test') {
+      steps {
+        echo 'Jenkins działa 🎉'
+      }
     }
 
-    stages {
     stage('Checkout') {
-    steps {
-    checkout scm
+      steps {
+        checkout scm
+      }
     }
+
+    stage('Install Helm Temporarily') {
+      steps {
+        sh '''
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        '''
+      }
     }
 
     stage('Prepare Helm Dependencies') {
-    steps {
-    sh "helm dependency update ${HELM_HOME}"
-    }
+      steps {
+        sh "helm dependency update ${HELM_HOME}"
+      }
     }
 
     stage('Deploy Microservices') {
-    steps {
-    sh "helm upgrade --install platform ${HELM_HOME} -f ${HELM_HOME}/values.yaml"
-    }
+      steps {
+        sh "helm upgrade --install platform ${HELM_HOME} -f ${HELM_HOME}/values.yaml"
+      }
     }
 
     stage('Verify Rollouts') {
-    steps {
-    sh "kubectl rollout status deployment/discovery-service || echo 'Discovery not ready'"
-    sh "kubectl rollout status deployment/vehicle-service || echo 'Vehicle not ready'"
-    sh "kubectl rollout status deployment/api-gateway || echo 'Gateway not ready'"
-    sh "kubectl rollout status deployment/vehicle-db || echo 'Vehicle-db not ready'"
-    }
-    }
+      steps {
+        sh '''
+          kubectl rollout status deployment/discovery-service || echo '❌ Discovery-service not ready'
+          kubectl rollout status deployment/vehicle-service || echo '❌ Vehicle-service not ready'
+          kubectl rollout status deployment/api-gateway || echo '❌ API Gateway not ready'
+          kubectl rollout status deployment/vehicle-db || echo '❌ Vehicle-db not ready'
+        '''
+      }
     }
   }
+}
