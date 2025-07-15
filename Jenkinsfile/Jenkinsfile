@@ -1,0 +1,11 @@
+pipeline {
+  agent any
+  stages {
+    stage('Smoke test') {
+      steps {
+        echo 'Jenkins działa 🎉'
+      }
+    }
+  }
+}
+
