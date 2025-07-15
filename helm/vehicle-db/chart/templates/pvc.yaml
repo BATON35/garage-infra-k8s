@@ -1,11 +1,12 @@
+{{- if not .Values.persistence.existingClaim }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
-  namespace: garage-core
+  name: {{ .Values.persistence.name | default "postgres-pvc" }}
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: {{ .Values.persistence.size | default "1Gi" }}
+{{- end }}
