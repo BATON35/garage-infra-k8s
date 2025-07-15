@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-servicie
+  namespace: garage-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle
+  template:
+    metadata:
+      labels:
+        app: vehicle
+    spec:
+      containers:
+        - name: vehicle
+          image: vehicle-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8180

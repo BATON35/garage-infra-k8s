@@ -1,0 +1,7 @@
+apiVersion: v2
+name: vehicle-db
+description: Helm chart to deploy vehicle-db
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+

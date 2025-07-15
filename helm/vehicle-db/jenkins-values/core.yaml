@@ -1,0 +1,11 @@
+replicaCount: 1
+
+image:
+  repository: konrad/discovery-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 8761
+  type: ClusterIP
+

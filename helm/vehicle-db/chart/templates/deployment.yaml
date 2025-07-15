@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-db
+  namespace: garage-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle-db
+  template:
+    metadata:
+      labels:
+        app: vehicle-db
+    spec:
+      containers:
+        - name: vehicle-db
+          image: postgres:15
+          env:
+            - name: POSTGRES_DB
+              value: vehicle_db
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
