@@ -1,0 +1,7 @@
+apiVersion: v2
+name: discovery-service
+description: Helm chart to deploy Eureka service
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+

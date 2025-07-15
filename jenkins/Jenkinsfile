@@ -1,11 +1,47 @@
-pipeline {
-  agent any
-  stages {
-    stage('Smoke test') {
-      steps {
-        echo 'Jenkins działa 🎉'
-      }
+// pipeline {
+//   agent any
+//   stages {
+//     stage('Smoke test') {
+//       steps {
+//         echo 'Jenkins działa 🎉'
+//       }
+//     }
+//   }
+// }
+
+  pipeline {
+    agent any
+
+    environment {
+    HELM_HOME = './helm/umbrella'
+    }
+
+    stages {
+    stage('Checkout') {
+    steps {
+    checkout scm
+    }
+    }
+
+    stage('Prepare Helm Dependencies') {
+    steps {
+    sh "helm dependency update ${HELM_HOME}"
+    }
+    }
+
+    stage('Deploy Microservices') {
+    steps {
+    sh "helm upgrade --install platform ${HELM_HOME} -f ${HELM_HOME}/values.yaml"
+    }
+    }
+
+    stage('Verify Rollouts') {
+    steps {
+    sh "kubectl rollout status deployment/discovery-service || echo 'Discovery not ready'"
+    sh "kubectl rollout status deployment/vehicle-service || echo 'Vehicle not ready'"
+    sh "kubectl rollout status deployment/api-gateway || echo 'Gateway not ready'"
+    sh "kubectl rollout status deployment/vehicle-db || echo 'Vehicle-db not ready'"
+    }
+    }
     }
   }
-}
-

@@ -1,0 +1,15 @@
+dependencies:
+- name: discovery-service
+  repository: file://../discovery-service/chart
+  version: 0.1.0
+- name: vehicle-service
+  repository: file://../vehicle-service/chart
+  version: 0.1.0
+- name: api-gateway
+  repository: file://../api-gateway/chart
+  version: 0.1.0
+- name: vehicle-db
+  repository: file://../vehicle-db/chart
+  version: 0.1.0
+digest: sha256:596e6746c856394985a408927a676f9a67cedd07160ae99b39789c28a0b265a9
+generated: "2025-07-15T23:27:28.600471246+02:00"
