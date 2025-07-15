@@ -1,11 +1,11 @@
 replicaCount: 1
 
 image:
-  repository: konrad/discovery-service
+  repository: konrad/vehicle-service
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
-  port: 8761
+  port: 8180
   type: ClusterIP
 

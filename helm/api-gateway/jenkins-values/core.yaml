@@ -1,11 +1,11 @@
 replicaCount: 1
 
 image:
-  repository: konrad/discovery-service
+  repository: konrad/api-gateway
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
-  port: 8761
+  port: 8080
   type: ClusterIP
 
