@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vehicle-servicie
+  name: vehicle-service
   namespace: garage-core
 spec:
   replicas: 1
