@@ -26,7 +26,9 @@ pipeline {
     stage('Build JAR') {
       steps {
         dir(SERVICE_DIR) {
-          sh './mvnw clean package -DskipTests'
+        sh "pwd"
+        sh "ls -la"
+        sh './mvnw clean package -DskipTests'
         }
       }
     }
