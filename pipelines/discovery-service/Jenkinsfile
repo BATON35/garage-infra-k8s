@@ -31,10 +31,11 @@ pipeline {
           usernameVariable: 'USERNAME'
         )]) {
           sh 'echo "Używam klucza: $KEYFILE dla użytkownika $USERNAME"'
-          sh 'ssh -i $KEYFILE -T git@github.com || echo "🔐 Brak dostępu"'
+          sh 'ssh -i "$KEYFILE" -T git@github.com || echo "🔐 Brak dostępu"'
         }
       }
     }
+
 
      stage('Clone vehicle-service') {
        steps {
