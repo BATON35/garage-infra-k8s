@@ -47,8 +47,10 @@ pipeline {
              credentialsId: 'github-ssh-key'
            ]]
          ])
+         sh 'ls -la'
        }
      }
+
 
 stage('Clone vehicle-service') {
   steps {
