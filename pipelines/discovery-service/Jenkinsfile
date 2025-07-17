@@ -19,7 +19,7 @@ pipeline {
           steps {
             checkout scm
             echo "📦 Kod źródłowy pobrany z repozytorium"
-            sh "ls -la vehicle-service"
+            sh "ls -la"
           }
         }
 
