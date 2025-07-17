@@ -24,11 +24,15 @@ pipeline {
           }
         }
 
-     stage('Clone Source Repo') {
-           steps {
-             sh "git clone $GIT_REPO"
-           }
-         }
+     checkout([
+       $class: 'GitSCM',
+       branches: [[name: '*/main']],
+       userRemoteConfigs: [[
+         url: $GIT_REPO,
+         credentialsId: 'git'
+       ]]
+     ])
+
 
     stage('Build JAR') {
       steps {
