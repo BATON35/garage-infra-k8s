@@ -1,0 +1,58 @@
+pipeline {
+  agent any
+
+  environment {
+    GIT_REPO    = "https://github.com/konrad84kb/discovery-service.git"
+    SERVICE_DIR = "discovery-service"
+    IMAGE_NAME  = "konrad84kb/discovery-service"
+    IMAGE_TAG   = "latest"  // Można później podmienić np. na SHA lub build number
+  }
+
+  stages {
+
+    stage('Clean Workspace') {
+      steps {
+        sh "rm -rf $SERVICE_DIR"
+      }
+    }
+
+    stage('Clone Source Repo') {
+      steps {
+        sh "git clone $GIT_REPO"
+      }
+    }
+
+    stage('Build JAR') {
+      steps {
+        dir(SERVICE_DIR) {
+          sh './mvnw clean package -DskipTests'
+        }
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        sh "docker build -t $IMAGE_NAME:$IMAGE_TAG $SERVICE_DIR"
+      }
+    }
+
+    stage('Push to DockerHub') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh 'echo $PASS | docker login -u $USER --password-stdin'
+          sh "docker push $IMAGE_NAME:$IMAGE_TAG"
+        }
+      }
+    }
+
+  }
+
+  post {
+    success {
+      echo "✅ Discovery-service image pushed to DockerHub: $IMAGE_NAME:$IMAGE_TAG"
+    }
+    failure {
+      echo "❌ Build or push failed"
+    }
+  }
+}
