@@ -51,13 +51,6 @@ pipeline {
        }
      }
 
-
-stage('Clone vehicle-service') {
-  steps {
-    checkout([...])
-    sh 'ls -la'
-  }
-}
     stage('Build JAR') {
       steps {
         dir(SERVICE_DIR) {
