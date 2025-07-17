@@ -31,7 +31,7 @@ pipeline {
            branches: [[name: '*/main']],
            userRemoteConfigs: [[
              url: "${GIT_REPO}",
-             credentialsId: 'git'
+             credentialsId: 'github-ssh-key'
            ]]
          ])
        }
