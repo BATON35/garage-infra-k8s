@@ -24,14 +24,18 @@ pipeline {
           }
         }
 
-     checkout([
-       $class: 'GitSCM',
-       branches: [[name: '*/main']],
-       userRemoteConfigs: [[
-         url: $GIT_REPO,
-         credentialsId: 'git'
-       ]]
-     ])
+     stage('Clone vehicle-service') {
+       steps {
+         checkout([
+           $class: 'GitSCM',
+           branches: [[name: '*/main']],
+           userRemoteConfigs: [[
+             url: "${GIT_REPO}",
+             credentialsId: 'git'
+           ]]
+         ])
+       }
+     }
 
 
     stage('Build JAR') {
