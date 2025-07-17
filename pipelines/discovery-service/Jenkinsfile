@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    GIT_REPO    = "https://github.com/konrad84kb/discovery-service.git"
+    GIT_REPO    = "git@github.com:BATON35/vehicle-service.git"
     SERVICE_DIR = "discovery-service"
     IMAGE_NAME  = "konrad84kb/discovery-service"
     IMAGE_TAG   = "latest"  // Można później podmienić np. na SHA lub build number
