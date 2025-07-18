@@ -1,0 +1,12 @@
+pipeline {
+  agent any
+  stages {
+    stage('Sprawdź agenta') {
+      steps {
+        sh 'java -version'
+        sh 'helm version'
+        sh 'kubectl version --client'
+      }
+    }
+  }
+}
