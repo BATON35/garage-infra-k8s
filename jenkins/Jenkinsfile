@@ -4,6 +4,7 @@ pipeline {
   environment {
     HELM_HOME = './helm/umbrella'
     HELM_PATH = "${WORKSPACE}/.helm/bin"
+    PATH = "${WORKSPACE}/.helm/bin:/usr/local/bin:/usr/bin:/bin"
   }
 
   stages {
@@ -27,23 +28,30 @@ pipeline {
           tar -zxvf helm.tar.gz
           mkdir -p .helm/bin
           mv linux-amd64/helm .helm/bin/helm
-          export PATH=$PWD/.helm/bin:$PATH
           echo "✅ Helm zainstalowany tymczasowo"
           helm version
         '''
       }
     }
 
-    stage('Prepare Helm Dependencies') {
+    stage('Install kubectl Temporarily') {
       steps {
         sh '''
-          export PATH=$PWD/.helm/bin:$PATH
-          helm dependency update ./helm/umbrella
+          curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mv kubectl .helm/bin/kubectl
+          kubectl version --client
         '''
-        echo "🔧 Zależności Helm zaktualizowane"
+        echo "📦 Kubectl zainstalowany tymczasowo"
       }
     }
 
+    stage('Prepare Helm Dependencies') {
+      steps {
+        sh 'helm dependency update ./helm/umbrella'
+        echo "🔧 Zależności Helm zaktualizowane"
+      }
+    }
 
     stage('Create Namespace') {
       steps {
@@ -54,13 +62,10 @@ pipeline {
       }
     }
 
-
-
     stage('Deploy Microservices') {
       steps {
         sh '''
-          export PATH=$PWD/.helm/bin:$PATH
-          helm upgrade --install platform ./helm/umbrella -f ./helm/umbrella/values.yaml
+          helm upgrade --install platform ./helm/umbrella -f ./helm/umbrella/values.yaml --namespace garage-core
         '''
         echo "🚀 Mikroserwisy wdrożone"
       }
@@ -69,10 +74,10 @@ pipeline {
     stage('Verify Rollouts') {
       steps {
         sh '''
-          kubectl rollout status deployment/discovery-service || echo '❌ Discovery-service nie gotowy'
-          kubectl rollout status deployment/vehicle-service || echo '❌ Vehicle-service nie gotowy'
-          kubectl rollout status deployment/api-gateway || echo '❌ API Gateway nie gotowy'
-          kubectl rollout status deployment/vehicle-db || echo '❌ Vehicle-db nie gotowy'
+          kubectl rollout status deployment/discovery-service -n garage-core || echo '❌ Discovery-service nie gotowy'
+          kubectl rollout status deployment/vehicle-service -n garage-core || echo '❌ Vehicle-service nie gotowy'
+          kubectl rollout status deployment/api-gateway -n garage-core || echo '❌ API Gateway nie gotowy'
+          kubectl rollout status deployment/vehicle-db -n garage-core || echo '❌ Vehicle-db nie gotowy'
         '''
         echo "🔍 Rollout-check zakończony"
       }
