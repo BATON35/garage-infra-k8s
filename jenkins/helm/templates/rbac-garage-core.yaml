@@ -5,7 +5,7 @@ metadata:
   name: jenkins-core-role
 rules:
   - apiGroups: [""]
-    resources: ["persistentvolumeclaims", "services", "pods"]
+    resources: ["persistentvolumeclaims", "services", "pods", "namespaces"]
     verbs: ["get", "list", "watch", "create", "update", "patch"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
