@@ -1,9 +1,0 @@
-agent:
-  customPodTemplate:
-    containers:
-      - name: jnlp
-        image: konrad-agent-ci
-        imagePullPolicy: Never
-        ttyEnabled: true
-        command: ['jenkins-agent']
-        args: ['${computer.jnlpmac}', '${computer.name}']

@@ -1,0 +1,27 @@
+{{- if .Values.rbacGarageCore.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-core-role
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims", "services", "pods"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins-core-binding
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-sa        # użyj swojego konta Jenkinsa
+    namespace: ci           # namespace, w którym działa Jenkins
+roleRef:
+  kind: ClusterRole
+  name: jenkins-core-role
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

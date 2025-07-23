@@ -1,0 +1,61 @@
+{{- if .Values.rbac.create }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins-sa
+  namespace: ci
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jenkins-core-role
+  namespace: ci
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "endpoints", "secrets", "persistentvolumeclaims", "configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-core-binding
+  namespace: ci
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-sa
+    namespace: ci
+roleRef:
+  kind: Role
+  name: jenkins-core-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: helm-secret-access
+  namespace: ci
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: helm-secret-binding
+  namespace: ci
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-sa
+    namespace: ci
+roleRef:
+  kind: Role
+  name: helm-secret-access
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

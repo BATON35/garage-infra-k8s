@@ -44,6 +44,18 @@ pipeline {
       }
     }
 
+
+    stage('Create Namespace') {
+      steps {
+        sh '''
+          kubectl create namespace garage-core || echo "garage-core namespace already exist. 👀"
+          kubectl get namespace garage-core --output=name
+        '''
+      }
+    }
+
+
+
     stage('Deploy Microservices') {
       steps {
         sh '''

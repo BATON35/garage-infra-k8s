@@ -1,0 +1,26 @@
+controller:
+  serviceAccountName: jenkins-sa
+  image:
+    repository: jenkins/jenkins
+    tag: lts
+    imagePullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+
+  javaOpts: "-Xmx512m"
+
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+persistence:
+  enabled: true
+  size: 8Gi
+
+rbac:
+  create: true
+rbacGarageCore:
+  enabled: true
+
