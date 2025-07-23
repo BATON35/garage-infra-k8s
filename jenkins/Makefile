@@ -9,3 +9,6 @@ cleanup:
 # Like cleanup but skip pvc
 cleanup-skip-pvc:
 	./cleanup.sh --preserve-pvc
+
+describe-helm-yaml:
+	helm template platform ./helm/umbrella -f ./helm/umbrella/values.yaml
