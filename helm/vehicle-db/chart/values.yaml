@@ -1,2 +1,4 @@
 persistence:
+  name: postgres-pvc
+  size: 5Gi
   existingClaim: true
