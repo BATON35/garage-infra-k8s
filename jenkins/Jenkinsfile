@@ -74,10 +74,10 @@ pipeline {
     stage('Verify Rollouts') {
       steps {
         sh '''
-          kubectl rollout status deployment/discovery-service -n garage-core || echo '❌ Discovery-service nie gotowy'
-          kubectl rollout status deployment/vehicle-service -n garage-core || echo '❌ Vehicle-service nie gotowy'
-          kubectl rollout status deployment/api-gateway -n garage-core || echo '❌ API Gateway nie gotowy'
-          kubectl rollout status deployment/vehicle-db -n garage-core || echo '❌ Vehicle-db nie gotowy'
+          kubectl rollout status deployment/discovery-service -n garage-core || exit 1
+          kubectl rollout status deployment/vehicle-service -n garage-core || exit 1
+          kubectl rollout status deployment/api-gateway -n garage-core || exit 1
+          kubectl rollout status deployment/vehicle-db -n garage-core || exit 1
         '''
         echo "🔍 Rollout-check zakończony"
       }
